@@ -9,11 +9,18 @@ print   " |--------ZMAP---------|"
 print   " +-+-+-+-+-+-+-+-+-+-+-+"
 threads = str(sys.argv[1])
 count = 0
-ipf=open('list.txt', 'w')
+file = (sys.argv[3])
+ipf=open(file, 'w')
 ipf.write('')
 ipf.close()
 running = 0
 port = str(sys.argv[2])
+if len(sys.argv) < 4:
+	print("use: zmap.py threads port output.txt")
+	exit()
+else:
+	pass
+	
 #print("scanning: " + port)
 def yadigg():
 #    for x in range(50): use thisif you on normal hydra not the shitty windows one
