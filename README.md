@@ -1,6 +1,9 @@
-# python3-zmap
-mass random ip port scanner
+# Eye-map
 
-cant get zmap on windows but can use this its not near as fast but works
+This tool scans random IP's on a set port
 
-use: zmap.py port threads output.txt
+Used as a replacement for zmap when unable to use zmap for any reason
+
+# Python3 Use:
+
+eyemap.py 80[port] 50[thread count Default: 50] [output file Default: list.txt]
