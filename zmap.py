@@ -4,17 +4,39 @@ import socket, ftplib
 import random
 import pickle ###serialize shit/ or make it kill itself before it gets too big a buffer 
 import time
-print ("\n +-+-+-+-+-+-+-+-+-+-+-+")
-print   (" |--------ZMAP---------|")
-print   (" +-+-+-+-+-+-+-+-+-+-+-+")
-print ("use:zmap.py port threads output.txt")
-threads = str(sys.argv[2])
+import requests
+print("    _______                  _______              ")
+print("   |    ___|.--.--.-----.___|   |   |.---.-.-----.")
+print("   |    ___||  |  |  -__|___|       ||  _  |  _  |")
+print("   |_______||___  |_____|   |__|_|__||___._|   __|")
+print("            |_____|                        |__|   ")
+print("\n")
+print (" [+] use: eyemap.py 80[port] 50[thread count Default: 50] [output file Default: list.txt] \n")
 count = 0
 ipf=open('list.txt', 'w')
 ipf.write('')
 ipf.close()
 
 port = int(sys.argv[1])
+if len(sys.argv) > 2:
+    threads = str(sys.argv[2])
+else:
+    threads = (50)
+    
+    
+if len(sys.argv) > 3:
+    output_list = (sys.argv[3])
+else:
+    output_list = ("list.txt")
+
+
+user_agents = [ 
+	'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 
+	'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36', 
+	'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36', 
+	'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148', 
+	'Mozilla/5.0 (Linux; Android 11; SM-G960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Mobile Safari/537.36' 
+] 
 def yadigg():
     global running
     running = (0)
@@ -31,23 +53,48 @@ def yadigg():
                 sock.settimeout(1.5)
                 result = sock.connect((ip, port))
                 try:
-                    #dns, alias, addresslist = socket.gethostbyaddr(ip)
-                    #dns.replace("'", '')
-                    #print(dns)
                     print (" [X] FOUND: " + ip +" [X] ")
-                    ipf=open('list.txt', 'a')
+                    ipf=open(output_list, 'a')
                     ipf.write(ip +  '\n')
                     ipf.close()
                     running = running + 1
-                except:
-                    #ipf=open('list.txt', 'a')
-                    #ipf.write(ip +  '\n')
-                    #ipf.close()
-                    #running = running + 1
-                    #print " [!] FOUND: " + ip + " [!]\n"
+                    try:
+                        user_agent = random.choice(user_agents) 
+                        headers = {'User-Agent': user_agent}
+                        site = ("https://" + ip)
+                        r = requests.get(site, timeout=10, verify=True, headers=headers)
+                        print("   [+] WebServer Found: " + site)
+                        open_site=open('site.txt', 'a')
+                        open_site.write(site +  '\n')
+                        open_site.close()
+                        soup = BeautifulSoup(r.content, 'lxml')
+                        title = (soup.select_one('title').text)
+                        print("     [!] WebServer Title: " + site + " [-] " + title + " [!]")
+                        fotitle = open("output_with_title.txt", "a+")
+                        fotitle.write(site + " ___ " + title +  "\n")
+                        fotitle.close
+                    except Exception:
+                        dns, alias, addresslist = socket.gethostbyaddr(ip)
+                        dns.replace("'", '')
+                        #print(dns)
+                        try:
+                            dns_site = ("https://" + dns)
+                            r2 = requests.get(dns_site, timeout=10, verify=True, headers=headers)
+                            print("   [+] DNS Found WebServer: " + dns_site)
+                            open_dns=open('dns.txt', 'a+')
+                            open_dns.write(dns_site +  '\n')
+                            open_dns.close()
+                            soupy = BeautifulSoup(r2.content, 'lxml')
+                            titley = (soup.select_one('title').text)
+                            print("     [!] DNS Serv. : " + dns_site + " [-] Title: " + titley + " [-] \n")
+                            open_dns_title=open('dns_title.txt', 'a+')
+                            open_dns_title.write(dns_site + " ___ " + titley +  "\n")
+                            open_dns_title.close()
+                        except Exception:
+                            pass
+                except Exception:
                     pass
-            #count = count + 1 
-            except: #Exception ,e:
+            except Exception:
                 pass         
 for threads in range(0, int(threads)):
 	try:
@@ -58,3 +105,5 @@ for threads in range(0, int(threads)):
 	except:
 		print('Thread failed: ' + str(count))
 print('Threads: ' + str(count))
+print('Output: ' + output_list)
+print('Port: ' + str(port) + '\n')
